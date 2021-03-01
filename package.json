@@ -4,7 +4,9 @@
   "description": "Rest API for shop project",
   "main": "server.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "tsc && node build/app/server.js",
+    "dev": "nodemon src/app/server.ts"
   },
   "keywords": [
     "express",
