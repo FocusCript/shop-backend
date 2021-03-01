@@ -7,8 +7,8 @@ class App {
     this.httpServer = express()
     this.httpServer.use(express.json());
     new Router(this.httpServer);
-
   }
+
   public Start = (port: number) => {
     return new Promise((resolve, reject) => {
       this.httpServer.listen(
@@ -19,6 +19,7 @@ class App {
         .on('error', (err: object) => reject(err));
     })
   }
+
 }
 
 export default App;
