@@ -1,9 +1,7 @@
 import * as express from 'express'
-import cors from 'cors'
-
 class Router {
 
-  constructor(server: express.Express) {
+  constructor(app: express.Express) {
       const router = express.Router()
 
       router.get('/', (req: express.Request, res: express.Response) => {
@@ -12,9 +10,7 @@ class Router {
           })
       })
 
-      router.options('*', cors());
-
-      server.use('/', router)
+      app.use('/', router)
   }
 }
 

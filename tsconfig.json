@@ -12,7 +12,7 @@
   ],
   "include": [
     "src/**/*.ts"
-  ],
+, "src/utils/apiError.js", "src/utils/catchAsync.js"  ],
   "exclude": [
     "node_modules"
   ]

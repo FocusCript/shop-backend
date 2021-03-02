@@ -1,8 +1,8 @@
 
 import jwt from "jsonwebtoken";
-import { asyncHandler } from './asyncHandler'
+const catchAsync = require('./catchAsync')
 
-const validateToken = asyncHandler(async (req, res, next)=>{
+const validateToken = catchAsync(async (req, res, next)=>{
   const authHeader = req.headers['authorization']
   const token = authHeader && authHeader.split(' ')[1]
   if (token == null) return res.sendStatus(401)
