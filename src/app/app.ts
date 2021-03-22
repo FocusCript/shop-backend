@@ -1,52 +1,68 @@
 import express from 'express'
-import Router from '../routes'
+import session from "express-session";
 import cors from 'cors'
 import helmet from 'helmet'
 import morgan from 'morgan'
 import compression from 'compression'
+import passport from "passport";
+import bluebird from "bluebird";
+import mongoose from 'mongoose'
+import MongoStore from "connect-mongo";
+import Router from '../routes'
+import { MONGODB_URI, SESSION_SECRET } from "../utils/secrets";
 
-class App {
-  private app: any
-  constructor() {
-    this.app = express()
+const app = express()
+// set logger
+app.use(morgan('combined'))
 
-    // set logger
-    this.app.use(morgan('combined'))
+// set security HTTP headers
+app.use(helmet())
+ 
+// parse json request body
+app.use(express.json())
 
-    // set security HTTP headers
-    this.app.use(helmet())
-     
-    // parse json request body
-    this.app.use(express.json())
+// parse urlencoded request body
+app.use(express.urlencoded({ extended: true }))
 
-    // parse urlencoded request body
-    this.app.use(express.urlencoded({ extended: true }))
+// gzip compression
+app.use(compression())
 
-    // gzip compression
-    this.app.use(compression());
-    
-    // enable cors
-    this.app.use(cors());
-    this.app.options('*', cors());
+// enable cors
+app.use(cors());
+app.options('*', cors())
 
-    // set routes
-    new Router(this.app);
-    
-  }
+//enable sessions
+app.use(session({
+  resave: true,
+  saveUninitialized: true,
+  secret: SESSION_SECRET,
+  store: MongoStore.create({
+      mongoUrl: MONGODB_URI
+  })
+}))
 
-  public Start = (port: number) => {
-    return new Promise((resolve, reject) => {
-      this.app.listen(
-        port,
-        () => {
-          resolve(port)
-        })
-        .on('error', (err: object) => reject(err));
-    })
-  }
+app.use(passport.initialize())
+app.use(passport.session())
 
-}
+app.use((req, res, next) => {
+    res.locals.user = req.user
+    next()
+});
 
-export default App;
+  // Connect to MongoDB
+const mongoOptions = { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true }
+mongoose.Promise = bluebird;
+
+mongoose.connect(MONGODB_URI, mongoOptions).then(
+    () => { /** ready to use. The `mongoose.connect()` promise resolves to undefined. */ },
+).catch(err => {
+    console.log(`MongoDB connection error. Please make sure MongoDB is running. ${err}`)
+    process.exit()
+});
+
+// set routes
+new Router(app)
+
+export default app
 
 

@@ -1,12 +1,23 @@
-import app from './app'
+import errorHandler from "errorhandler";
 
-const port = parseInt(process.env.PORT || '5000')
+import app from "./app";
 
-const server = new app().Start(port)
-  .then(port => console.log(`Server running on port ${port}`))
-  .catch(error => {
-    console.log(error)
-    process.exit(1);
-  });
+/**
+ * Error Handler. Provides full stack - remove for production
+ */
+app.use(errorHandler());
+
+/**
+ * Start Express server.
+ */
+const port = process.env.PORT || 3000
+const env = process.env.NODE_ENV || 'dev'
+
+const server = app.listen(port, () => {
+    console.log(
+        `App is running at http://localhost: ${port} in ${env} mode`,
+    );
+    console.log("  Press CTRL-C to stop\n");
+});
 
 export default server;
