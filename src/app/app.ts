@@ -5,10 +5,9 @@ import helmet from 'helmet'
 import morgan from 'morgan'
 import compression from 'compression'
 import passport from "passport";
-import bluebird from "bluebird";
-import mongoose from 'mongoose'
 import MongoStore from "connect-mongo";
 import Router from '../routes'
+import { connectDB } from '../config/db/mongo'
 import { MONGODB_URI, SESSION_SECRET } from "../utils/secrets";
 
 const app = express()
@@ -49,18 +48,9 @@ app.use((req, res, next) => {
     next()
 });
 
-  // Connect to MongoDB
-const mongoOptions = { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true }
-mongoose.Promise = bluebird;
-
-mongoose.connect(MONGODB_URI, mongoOptions).then(
-    () => { /** ready to use. The `mongoose.connect()` promise resolves to undefined. */ },
-).catch(err => {
-    console.log(`MongoDB connection error. Please make sure MongoDB is running. ${err}`)
-    process.exit()
-});
-
-// set routes
+//Connect to DB
+connectDB(MONGODB_URI)
+//set routes
 new Router(app)
 
 export default app
