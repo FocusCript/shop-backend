@@ -1,6 +1,6 @@
 
 import jwt from "jsonwebtoken";
-const catchAsync = require('./catchAsync')
+import { catchAsync } from '../utils/catchAsync'
 
 const validateToken = catchAsync(async (req, res, next)=>{
   const authHeader = req.headers['authorization']
